@@ -1,6 +1,7 @@
 import { useState } from "react"
 import { getDayTypeDisplay, getWorkingHoursDisplay } from "../../assets/assets"
 import {format} from 'date-fns'
+import { Check, CheckIcon, Loader2, X } from "lucide-react"
 
 const LeaveHistory = ({leaves, isAdmin, onUpdate}) => {
 
@@ -12,54 +13,66 @@ const LeaveHistory = ({leaves, isAdmin, onUpdate}) => {
 
   return (
     <div className="card overflow-hidden">
-          
           <div className="overflow-x-auto">
               <table className="table-modern">
                 <thead>
                   <tr>
-                    <th className="px-6 py-4">Date</th>
-                    <th className="px-6 py-4">Check in</th>
-                    <th className="px-6 py-4">Check out</th>
-                    <th className="px-6 py-4">Working Hours</th>
-                    <th className="px-6 py-4">Day Type</th>
-                    <th className="px-6 py-4">Status</th>
+                    {isAdmin && <th>Employee</th>}
+                    <th>Type</th>
+                    <th>Dates</th>
+                    <th>Reasons</th>
+                    <th>Status</th>
+                    {isAdmin && <th className="text-center">Actions</th>}
                   </tr>
                 </thead>
                 <tbody>
-                  {history.length === 0 ? (
+                  {leaves.length === 0 ? (
                     <tr>
-                      <td colSpan={6} className="text-center py-12 text-slate-400">
-                        No Records Found
+                      <td colSpan={isAdmin ? 6 : 4} className="text-center py-12 text-slate-400">
+                        No Applications Found
                       </td>
                     </tr>
                   ):(
-                    history.map((record)=>{
-                      const dayType = getDayTypeDisplay(record)
+                    leaves.map((leave)=>{
+                      
                       return(
-                        <tr key={record._id || record.id}>
-                          <td className="px-6 py-4 font-medium text-slate-900">
-                            {format(new Date(record.date), "MMM dd, yyyy")}
+                        <tr key={leave._id || leave.id}>
+                          {isAdmin &&(
+                            <td className=" text-slate-900">
+                            {leave.employee?.firstName}
+                            {leave.employee?.lastName}
                           </td>
-    
-                          <td className="px-6 py-4  text-slate-600">
-                            {record.checkIn ? format(new Date(record.checkIn), "hh:mm a") : "-"}
+                          )}
+                          <td>
+                            <span className="badge bg-slate-100 text-slate-600">{leave.type}</span>
                           </td>
-    
-                          <td className="px-6 py-4  text-slate-600">
-                            {record.checkOut ? format(new Date(record.checkOut), "hh:mm a") : "-"}
+                          <td className="text-xs  text-slate-500">
+                            { format(new Date(leave.startDate), "MMM dd")} - { format(new Date(leave.endDate), "MMM dd, yyy")}
                           </td>
-    
-                          <td className="px-6 py-4 font-medium  text-slate-600">
-                            {getWorkingHoursDisplay(record)}
+                          <td className="max-w-xs  text-slate-500" title={leave.reason}>
+                            {leave.reason}
                           </td>
-                          <td className="px-6 py-4">
-                            {dayType.label !== "-" ? <span className={`badge ${dayType.className}`}>{dayType.label}</span> : "-"}
-                          </td>
-                          <td className="px-6 py-4">
-                            <span className={`badge ${record.status === "PRESENT" ? "badge-success" : record.status === "LATE" ?  "badge-warning" : "badge-danger"}`}>
-                            {record.status}
+                          <td >
+                            <span className={`badge ${leave.status === "APPROVED" ? "badge-success" : leave.status === "REJECTED" ?  "badge-danger" : "badge-warning"}`}>
+                              {leave.status}
                             </span>
                           </td>
+
+                          {isAdmin && (
+                            <td>
+                              {leave.status === "PENDING" && (
+                                <div className="flex justify-center gap-2">
+                                  <button onClick={()=>handleStatusUpdate(leave._id || leave.id, "APPROVED")} disabled={!!processing} className="p-1.5 rounded-md bg-emerald-50 text-emerald-600 hover:bg-emerald-100 transition-colors">
+                                    {processing === (leave._id || leave.id) ? <Loader2 className="w-4 h-4 animate-spin"/>  : <Check className="w-4 h-4" />}
+                                  </button>
+                                  <button onClick={()=>handleStatusUpdate(leave._id || leave.id, "REJECTED")} disabled={!!processing} className="p-1.5 rounded-md bg-rose-50 text-rose-600 hover:bg-rose-100 transition-colors">
+                                    {processing === (leave._id || leave.id) ? <Loader2 className="w-4 h-4 animate-spin"/>  : <X className="w-4 h-4" />}
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+                          )}
+                          
                         </tr>
                       )
                     })

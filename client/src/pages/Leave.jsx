@@ -2,12 +2,14 @@ import { useCallback, useEffect, useState } from 'react'
 import { dummyLeaveData } from '../assets/assets'
 import Loading from '../components/Loading'
 import { icons, PalmtreeIcon, PlusIcon, ThermometerIcon, UmbrellaIcon } from 'lucide-react'
+import LeaveHistory from '../components/Leave/LeaveHistory'
+import ApplyLeaveModal from '../components/Leave/ApplyLeaveModal'
 
 const Leave = () => {
 
   const [leaves, setLeaves] = useState([])
   const [loading, setLoading] = useState(true)
-  const [showModal, setShowMoad] =useState(false)
+  const [showModal, setShowModal] =useState(false)
   const [isDeleted, setIsDeleted] = useState(false)
 
   const isAdmin = false;
@@ -52,11 +54,11 @@ const Leave = () => {
     <div className='animate-fade-in'>
       <div className='flex flex-cols sm:flex-row justify-between items-start sm:items-center gap-4 mb-8'>
         <div>
-          <h1>Leave Management</h1>
-          <p>{isAdmin ? "Manage Leave Applications" : "Your Leave History and Request"}</p>
+          <h1 className='page-title'>Leave Management</h1>
+          <p className='page-subtitle'>{isAdmin ? "Manage Leave Applications" : "Your Leave History and Request"}</p>
         </div>
         {!isAdmin && !isDeleted &&(
-          <button onClick={()=> setShowMoad(true)} className='btn-primary flex items-center gap-2 w-full sm:w-auto justify-center'>
+          <button onClick={()=> setShowModal(true)} className='btn-primary flex items-center gap-2 w-full sm:w-auto justify-center'>
             <PlusIcon className='w-4 h-4' /> Apply for Leave
           </button>
         )}
@@ -82,6 +84,9 @@ const Leave = () => {
           ))}
         </div>
       )}
+
+      <LeaveHistory leaves={leaves} isAdmin={isAdmin} onUpdate={fetchLeaves} />
+      <ApplyLeaveModal open={showModal} onClose={()=>setShowModal(false)} onSuccess={fetchLeaves} />
     </div>
   )
 }
