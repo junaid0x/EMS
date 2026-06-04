@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { dummyAdminDashboardData, dummyEmployeeDashboardData } from "../assets/assets"
+import { dummyAdminDashboardData, dummyEmployeeDashboardData, dummyEmployeeData } from "../assets/assets"
 import Loading from "../components/Loading"
 import EmployeeDashboard from "../components/EmployeeDashboard"
 import AdminDashboard from "../components/AdminDashboard"
