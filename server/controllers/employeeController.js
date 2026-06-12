@@ -29,7 +29,7 @@ export const getEmployees = async (req, res) => {
 //Create Employee
 // Post /api/employees
 
-export const createEmployees = async (req, res) => {
+export const createEmployee = async (req, res) => {
     try {
         const {firstName, lastName, email, phone, position, department, basicSalary, allowances,
             deductions, joinDate, password, role, bio
@@ -74,7 +74,7 @@ export const createEmployees = async (req, res) => {
 
 //Update Employee
 // Put /api/employees/:id
-export const updateEmployees = async (req, res) => {
+export const updateEmployee = async (req, res) => {
     try {
         const {id} = req.params;
         const {firstName, lastName, email, phone, position, department, basicSalary, allowances,
@@ -116,7 +116,7 @@ export const updateEmployees = async (req, res) => {
 
 //Delete Employee
 //Delete /api/employees/:id
-export const deleteEmployees = async (req, res) => {
+export const deleteEmployee = async (req, res) => {
     try {
         const {id} = req.params;
 
