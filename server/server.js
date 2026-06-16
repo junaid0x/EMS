@@ -10,6 +10,9 @@ import profileRouter from "./routes/profileRoutes.js";
 import attendanceRouter from "./routes/attendanceRoutes.js";
 import leaveRouter from "./routes/leaveRoutes.js";
 import payslipRouter from "./routes/payslipsRoutes.js";
+import dashboardRouter from "./routes/dashboardRoutes.js";
+import { serve } from "inngest/express";
+import { inngest, functions } from "./inngest/index.js"
 
 // Use public DNS for SRV resolution when local DNS refuses MongoDB SRV queries
 dns.setServers(["8.8.8.8", "1.1.1.1"]);
@@ -33,6 +36,9 @@ app.use('/api/profile', profileRouter)
 app.use('/api/attendance', attendanceRouter)
 app.use('/api/leave', leaveRouter)
 app.use('/api/payslips', payslipRouter)
+app.use('/api/dashboard', dashboardRouter)
+
+app.use("/api/inngest", serve({ client: inngest, functions }));
 
 
 await connectDB()
