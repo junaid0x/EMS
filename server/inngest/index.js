@@ -5,7 +5,7 @@ import LeaveApplication from "../models/LeaveApplication.js";
 import sendEmail from "../config/nodeMailer.js";
 
 // Create a client to send and receive events
-export const inngest = new Inngest({ id: "fullstack=ems" });
+export const inngest = new Inngest({ id: "fullstack=ems", eventKey: process.env.INNGEST_EVENT_KEY });
 
 // Auto Check-out for employees:
 const autoCheckOut = inngest.createFunction(
@@ -62,12 +62,12 @@ const autoCheckOut = inngest.createFunction(
 const leaveApplicationReminder = inngest.createFunction(
   { id: "leave-application-reminder", triggers: [{event: 'leave/pending'}]}, 
   async ({event, step}) => {
-    const {leaveApplicaionId} = event.data;
+    const {leaveApplicationId} = event.data;
 
     //wait for 24 hrs
     await step.sleepUntil("wait-for-the-24-hours", new Date(new Date().getTime()+ 24 *60 * 60 * 1000))
 
-    const leaveApplication = await LeaveApplication.findById(leaveApplicaionId)
+    const leaveApplication = await LeaveApplication.findById(leaveApplicationId)
 
     if(leaveApplication?.status === "PENDING"){
       const employee = await Employee.findById(leaveApplication.employeeId)
@@ -98,9 +98,9 @@ const attendanceReminderCron = inngest.createFunction(
    //06:00 UTC = 11:30 AM IST
     async ({step}) => {
       //Step 1: get today's date range (IST)
-      const today = await step.run("get-today-date", ()=>{
+        const today = await step.run("get-today-date", ()=>{
         const startUTC = new Date(new Date().toLocaleDateString("en-CA", {timeZone: "Asia/Kolkata"}) + "T00:00:00+05:30")
-        const endUTC =  new Date(startUTC.getTime() + 24 * 60 * 60 * 100)
+        const endUTC =  new Date(startUTC.getTime() + 24 * 60 * 60 * 1000)
         return {startUTC: startUTC.toISOString(), endUTC: endUTC.toISOString()}
       })
       
