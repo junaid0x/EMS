@@ -60,10 +60,13 @@ export const session =  (req, res) => {
 export const changePassword = async (req,res) => {
     try {
         const session = req.session;
-        const {currentPassword, newPassword} = req.body;
+        const currentPassword = req.body?.currentPassword?.toString().trim();
+        const newPassword = req.body?.newPassword?.toString().trim();
+
         if(!currentPassword || !newPassword){
-            return res.status(400).json({error: "Require Both Paswords"})
+            return res.status(400).json({error: "Please enter both current and new password."})
         }
+
         const user = await User.findById(session.userId)
         if(!user) return res.status(404).json({error: "User not found"})
 

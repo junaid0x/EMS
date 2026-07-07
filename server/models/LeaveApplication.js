@@ -20,11 +20,12 @@ const leaveApplicationSchema = new mongoose.Schema({
         required: true
     },
     reason: {
-        type: Date,
-        required: true
+        type: String,
+        required: true,
+        trim: true
     },
     status: {
-        type: Date,
+        type: String,
         enum: ["PENDING", "APPROVED", "REJECTED"],
         default: "PENDING"
     }

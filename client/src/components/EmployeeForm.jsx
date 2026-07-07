@@ -2,6 +2,8 @@ import {useNavigate} from 'react-router'
 import { DEPARTMENTS } from '../assets/assets';
 import { useState } from 'react';
 import { Loader2Icon } from 'lucide-react';
+import api from '../api/axios';
+import toast from 'react-hot-toast';
 
 
 const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
@@ -12,6 +14,24 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
 
     const handleSubmit = async (e)=>{
         e.preventDefault();
+        setLoading(true)
+        const formData = new FormData(e.currentTarget)
+        if(isEditMode){
+            const pwd = formData.get("password")
+            if(!pwd) formData.delete("password")
+        }
+
+        try {
+            const url = isEditMode ? `/employees/${initialData.id}` : "/employees"
+            const method = isEditMode ? "put" : "post"
+
+            await api[method](url, formData)
+            onSuccess ? onSuccess() : navigate("/employees")
+        } catch (error) {
+            toast.error(error.response?.data?.error || error.message)
+        }finally{
+            setLoading(false)
+        }
     }
 
   return (
@@ -62,7 +82,7 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
                 </div>
                 <div>
                     <label className='block mb-2'>Basic Salary</label>
-                    <input type='number' name='basicSalary' required defaultValue={initialData?.basicSalar || 0} min="0" step="0.01"/>
+                    <input type='number' name='basicSalary' required defaultValue={initialData?.basicSalary || 0} min="0" step="0.01"/>
                 </div>
                 <div>
                     <label className='block mb-2'>Allowances</label>
@@ -101,7 +121,7 @@ const EmployeeForm = ({initialData, onSuccess, onCancel}) => {
                 {isEditMode && (
                 <div>
                     <label className='block mb-2'>Change Password(Optional)</label>
-                    <input type='password' name='password' placeholder='Leave blank to keep current password' required />
+                    <input type='password' name='password' placeholder='Leave blank to keep current password'  />
                 </div>
                 )}
                 <div>
