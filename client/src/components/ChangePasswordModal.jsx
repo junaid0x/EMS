@@ -1,5 +1,6 @@
 import { Loader2, Lock, X } from 'lucide-react'
 import  { useState } from 'react'
+import api from '../api/axios'
 
 const ChangePasswordModal = ({open, onClose}) => {
 
@@ -8,6 +9,30 @@ const ChangePasswordModal = ({open, onClose}) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
+        setLoading(true)
+        setMessage({type: "", text: ""})
+
+        const currentPassword = e.currentTarget.elements.currentPassword?.value?.trim()
+        const newPassword = e.currentTarget.elements.newPassword?.value?.trim()
+
+        if (!currentPassword || !newPassword) {
+            setMessage({type: "error", text: "Please enter both your current and new password."})
+            setLoading(false)
+            return
+        }
+
+        try {
+            const {data} = await api.post("/auth/change-password", {currentPassword, newPassword})
+            if(!data.success) throw new Error(data.error || "Failed")
+                setMessage({type: "success", text: "Password Updated Successfully"})
+                e.target.reset();
+            
+        } catch (error) {
+            const serverMessage = error.response?.data?.error || error.message
+            setMessage({type: "error", text: serverMessage})
+        } finally {
+            setLoading(false)
+        }
     }
 
     if(!open) return null;
@@ -34,11 +59,11 @@ const ChangePasswordModal = ({open, onClose}) => {
                 )}
                 <div>
                     <label className='block text-sm font-medium text-slate-700 mb-2'>Current Password</label>
-                    <input type="password" name='currentPasword' required />
+                    <input type="password" name='currentPassword' required />
                 </div>
                 <div>
                     <label className='block text-sm font-medium text-slate-700 mb-2'>New Password</label>
-                    <input type="password" name='newPasword' required />
+                    <input type="password" name='newPassword' required />
                 </div>
                 <div className='flex gap-3 pt-2'>
                     <button type='button' onClick={onClose} className='btn-secondary flex-1'>

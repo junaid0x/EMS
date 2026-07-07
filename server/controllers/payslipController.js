@@ -55,7 +55,7 @@ export const getPayslip = async (req, res) => {
 
             return res.json({data})
         }else{
-            const employee = await Employee.find({userId: session.userId})
+            const employee = await Employee.findOne({userId: session.userId})
             if(!employee){
                 return res.status(404).json({error: "Not found"})
             }
