@@ -11,7 +11,7 @@ const LoginLanding = () => {
   const {user, loading} = useAuth()
 
   if(loading) return <Loading/>
-  if(user) return <Navigate to="/login"/>
+  if(user) return <Navigate to="/dashboard" replace />
 
   
       const portalOptions =[
