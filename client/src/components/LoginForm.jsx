@@ -7,8 +7,8 @@ import toast from 'react-hot-toast'
 
 const LoginForm = ({ role, title, subtitle }) => {
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const [email, setEmail] = useState("admin")
+  const [password, setPassword] = useState("admin")
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState("")
   const [loading, setLoading] = useState(false)
@@ -23,8 +23,10 @@ const LoginForm = ({ role, title, subtitle }) => {
       await login(email, password, role)
       navigate("/dashboard")
     } catch (error) {
-      toast.error(error.response?.data?.error || error.message || "Login Failed")
-    }finally{
+      const message = error.response?.data?.error || error.message || "Login Failed"
+      setError(message)
+      toast.error(message)
+    } finally {
       setLoading(false)
     }
   }
@@ -51,14 +53,14 @@ const LoginForm = ({ role, title, subtitle }) => {
 
           <form action="" className="space-y-5" onSubmit={handleSubmit}>
             <div>
-              <label htmlFor="" className="block text-sm font-medium text-slate-700 mb-2">Email Address</label>
-              <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="john@example.com" />
+              <label htmlFor="username" className="block text-sm font-medium text-slate-700 mb-2">Username</label>
+              <input id="username" type="text" value={email} onChange={(e) => setEmail(e.target.value)} required placeholder="admin" autoComplete="username" />
             </div>
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Password</label>
+              <label htmlFor="password" className="block text-sm font-medium text-slate-700 mb-2">Password</label>
               <div className="relative">
-                <input type={showPassword ? 'text' : 'password'} onChange={(e) => setPassword(e.target.value)} required
-                className="pr-11" placeholder="******" />
+                <input id="password" type={showPassword ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} required
+                className="pr-11" placeholder="admin" autoComplete="current-password" />
                 <button type="button" className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400
                  hover:text-slate-600 transition-colors" onClick={()=> setShowPassword(!showPassword)}>
                   {showPassword ? <EyeOffIcon size={18}/> : <EyeIcon size={18}/>}
